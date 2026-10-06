@@ -1,0 +1,512 @@
+/* =========================================================
+   NOMAD — Thermos hero landing page
+   Plain CSS, no framework. Per-product colors live in the
+   PRODUCTS array in script.js.
+   ========================================================= */
+
+:root {
+  --cream: #ede9da;
+  --cream-2: #f6f3e9;
+  --ink: #1b1a17;
+  --radius-frame: 40px;
+  --radius-card: 32px;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --dur: 800ms;
+  --card-w: 200px;
+  --card-h: 270px;
+
+  /* Carousel slot positions (horizontal center of each card).
+     script.js references these, so tweak them per breakpoint here. */
+  --pos-out-l: -14%;
+  --pos-l2: 5%;
+  --pos-l1: 20%;
+  --pos-r1: 80%;
+  --pos-r2: 95%;
+  --pos-out-r: 114%;
+  --hero-scale: 1.45;
+  --side-scale: 0.95;
+  --far-scale: 0.85;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  background: #000;
+}
+
+body {
+  font-family: "Inter", sans-serif;
+  color: var(--cream-2);
+  overflow: hidden;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+  color: inherit;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+svg {
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
+}
+
+/* ===================== FRAME ===================== */
+
+.frame {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  border-radius: var(--radius-frame);
+  overflow: hidden;
+  background: #0e0e10; /* fallback; bg-layer divs render the real gradient */
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: inset 0 0 0 10px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  isolation: isolate;
+}
+
+/* ===================== TOP BAR ===================== */
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 32px 40px 0;
+  z-index: 20;
+}
+
+.logo {
+  font-family: "Fraunces", serif;
+  font-weight: 700;
+  font-size: 22px;
+  letter-spacing: 0.06em;
+  color: var(--cream-2);
+}
+
+.pill-nav {
+  position: absolute;
+  left: 50%;
+  top: 32px;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  padding: 6px;
+}
+
+.nav-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.75);
+  transition: background 0.25s var(--ease), color 0.25s var(--ease);
+}
+
+.nav-btn:hover {
+  color: #fff;
+}
+
+.nav-btn.active {
+  background: var(--ink);
+  color: #fff;
+}
+
+.locate-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.85);
+  transition: background 0.25s var(--ease);
+}
+
+.locate-btn:hover {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+/* ===================== STAGE / CAROUSEL ===================== */
+
+.stage {
+  position: relative;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.carousel {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* -------- product cards --------
+   One permanent element per product. Position, rotation, scale and
+   opacity are set inline by script.js (see SLOT_STYLE). ".is-hero"
+   is toggled on whichever card sits in the center slot. */
+
+.product-card {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: var(--card-w);
+  height: var(--card-h);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  will-change: transform, left, opacity;
+}
+
+/* Cream card surface — fades out when the card becomes the hero */
+.product-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-card);
+  background: linear-gradient(160deg, var(--cream-2), var(--cream));
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
+  transition: opacity 500ms var(--ease), transform 0.4s var(--ease);
+}
+
+.product-card:not(.is-hero):hover::before {
+  transform: translateY(-8px);
+}
+
+/* Wrapper that holds the bottle; carries the idle float on the hero */
+.card-float {
+  position: relative;
+  width: 58%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.4s var(--ease);
+}
+
+.product-card:not(.is-hero):hover .card-float {
+  transform: translateY(-12px);
+}
+
+/* Bottle + name float together; the base below stays grounded */
+.bottle {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+}
+
+.product-card.is-hero .bottle {
+  animation: floaty 4.5s ease-in-out infinite;
+}
+
+.card-float img {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 10px 14px rgba(0, 0, 0, 0.3));
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* Product name printed on the bottle body */
+.card-etch {
+  position: absolute;
+  z-index: 3;
+  left: 50%;
+  top: 52%;
+  transform: translate(-50%, -50%);
+  font-family: "Fraunces", serif;
+  font-style: italic;
+  font-weight: 500;
+  font-size: 11px;
+  letter-spacing: 0.02em;
+  color: rgba(255, 255, 255, 0.7);
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 150ms ease;
+}
+
+.product-card.is-hero .card-etch {
+  transition: opacity 400ms ease 350ms;
+}
+
+/* Natural stone base the hero stands on (colored per product in JS) */
+.card-base {
+  position: absolute;
+  z-index: 1;
+  left: 50%;
+  bottom: -6%;
+  width: 150%;
+  height: 16%;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  opacity: 0;
+  box-shadow: inset 0 -6px 12px rgba(0, 0, 0, 0.45), 0 18px 30px rgba(0, 0, 0, 0.45);
+  transition: opacity 500ms var(--ease);
+}
+
+/* speckled "stone" texture on the base */
+.card-base::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background-image:
+    radial-gradient(rgba(255, 255, 255, 0.14) 1px, transparent 1.5px),
+    radial-gradient(rgba(0, 0, 0, 0.25) 1px, transparent 1.5px);
+  background-size: 7px 7px, 11px 11px;
+  background-position: 0 0, 3px 4px;
+  mix-blend-mode: overlay;
+}
+
+.product-card.is-hero {
+  cursor: default;
+}
+
+.product-card.is-hero::before {
+  opacity: 0;
+}
+
+.product-card.is-hero .card-etch,
+.product-card.is-hero .card-base {
+  opacity: 1;
+}
+
+.product-card.is-hero img {
+  filter: drop-shadow(0 26px 30px rgba(0, 0, 0, 0.5));
+}
+
+@keyframes floaty {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+/* -------- price card -------- */
+
+.price-card {
+  position: absolute;
+  /* sits just below the hero bottle, whose height scales with the card */
+  top: calc(50% + var(--card-w) * var(--hero-scale) * 0.62);
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  background: var(--cream);
+  color: var(--ink);
+  border-radius: 999px;
+  padding: 10px 10px 10px 22px;
+  box-shadow: 0 16px 30px rgba(0, 0, 0, 0.3);
+  z-index: 15;
+}
+
+.price-info {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+  min-width: 110px;
+}
+
+.price-name,
+.price-value {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.price-name {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  opacity: 0.6;
+}
+
+.price-value {
+  font-family: "Fraunces", serif;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.price-fade-out .price-name,
+.price-fade-out .price-value {
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+.price-cart {
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--cream);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s var(--ease);
+}
+
+.price-cart:hover {
+  transform: scale(1.08);
+}
+
+/* -------- arrows -------- */
+
+.arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 46px;
+  height: 46px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: rgba(255, 255, 255, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 25;
+  transition: background 0.25s ease, transform 0.2s ease;
+}
+
+.arrow:hover {
+  background: rgba(255, 255, 255, 0.18);
+  transform: translateY(-50%) scale(1.06);
+}
+
+.arrow-left { left: 2.5%; }
+.arrow-right { right: 2.5%; }
+
+/* ===================== HEADLINE ===================== */
+
+.headline {
+  text-align: center;
+  font-family: "Fraunces", serif;
+  font-weight: 600;
+  font-size: clamp(48px, 8vw, 108px);
+  line-height: 0.98;
+  letter-spacing: -0.01em;
+  color: var(--cream-2);
+  text-shadow: 0 0 60px rgba(255, 255, 255, 0.25);
+  padding-bottom: 56px;
+  z-index: 20;
+  user-select: none;
+}
+
+/* ===================== DOTS ===================== */
+
+.dots {
+  position: absolute;
+  bottom: 22px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  z-index: 20;
+}
+
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.3);
+  transition: background 0.3s ease, width 0.3s ease;
+  cursor: pointer;
+}
+
+.dot.active {
+  background: var(--cream-2);
+  width: 20px;
+}
+
+/* ===================== RESPONSIVE ===================== */
+
+@media (max-width: 1024px) {
+  :root {
+    --card-w: 160px;
+    --card-h: 216px;
+    --pos-l2: 2%;
+    --pos-l1: 16%;
+    --pos-r1: 84%;
+    --pos-r2: 98%;
+  }
+  .headline { font-size: clamp(38px, 9vw, 72px); }
+}
+
+/* Short desktop windows: keep the hero from colliding with the headline */
+@media (max-height: 760px) {
+  :root { --hero-scale: 1.05; }
+}
+
+@media (max-width: 720px) {
+  :root {
+    --radius-frame: 24px;
+    --radius-card: 22px;
+    --card-w: 110px;
+    --card-h: 150px;
+    --pos-out-l: -30%;
+    --pos-l2: -8%;
+    --pos-l1: 8%;
+    --pos-r1: 92%;
+    --pos-r2: 108%;
+    --pos-out-r: 130%;
+    --hero-scale: 1.6;
+  }
+  .topbar { padding: 20px 20px 0; }
+  .logo { font-size: 18px; }
+  .pill-nav { padding: 4px; top: 72px; }
+  .nav-btn { width: 32px; height: 32px; }
+  svg { width: 14px; height: 14px; }
+  .locate-btn { width: 36px; height: 36px; }
+
+  .card-etch { font-size: 7px; }
+
+  .price-card { padding: 8px 8px 8px 16px; gap: 12px; }
+  .price-value { font-size: 16px; }
+  .price-cart { width: 32px; height: 32px; }
+
+  .headline { font-size: clamp(26px, 9vw, 40px); padding-bottom: 48px; }
+  .dots { bottom: 20px; }
+
+  .arrow { width: 36px; height: 36px; }
+  .arrow-left { left: 1%; }
+  .arrow-right { right: 1%; }
+}
+
+/* ===================== REDUCED MOTION ===================== */
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition-duration: 0.01ms !important;
+  }
+}
