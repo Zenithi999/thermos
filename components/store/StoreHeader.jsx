@@ -54,7 +54,6 @@ export default function StoreHeader({ categories = [], instagramUrl }) {
       label: c.name,
       active: activeCategory === c.slug,
     })),
-    { href: "/delivery", label: "Хүргэлт", active: pathname.startsWith("/delivery") },
     { href: "/track", label: "Захиалга шалгах", active: pathname.startsWith("/track") },
   ];
 

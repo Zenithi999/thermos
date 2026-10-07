@@ -42,7 +42,6 @@ export default function SiteFooter({ settings, categories = [] }) {
           <h3>Тусламж</h3>
           <ul>
             <li><Link href="/track">Захиалга шалгах</Link></li>
-            <li><Link href="/delivery">Хүргэлт ба буцаалт</Link></li>
             <li><Link href="/account">Миний бүртгэл</Link></li>
             <li><Link href="/cart">Сагс</Link></li>
           </ul>
@@ -76,7 +75,6 @@ export default function SiteFooter({ settings, categories = [] }) {
       </div>
       <div className="container footer-bottom">
         <span>© {year} Thermos. Бүх эрх хуулиар хамгаалагдсан.</span>
-        <Link href="/delivery">Хүргэлт ба буцаалтын нөхцөл</Link>
       </div>
     </footer>
   );

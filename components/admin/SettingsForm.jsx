@@ -40,7 +40,7 @@ export default function SettingsForm({ settings }) {
 
       <section className="card card-pad">
         <h2 className="card-title">Холбоо барих</h2>
-        <p className="muted small">Сайтын доод хэсэг болон “Хүргэлт ба буцаалт” хуудсанд харагдана.</p>
+        <p className="muted small">Сайтын доод хэсэгт харагдана.</p>
         <div className="grid-2">
           <div className="field">
             <label htmlFor="phone">Утас</label>
