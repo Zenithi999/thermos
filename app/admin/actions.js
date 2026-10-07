@@ -74,7 +74,7 @@ export async function saveProduct(prevState, formData) {
   for (const key of ["bg_from", "bg_to", "accent"]) {
     if (!HEX_RE.test(values[key])) errors[key] = "Өнгө #RRGGBB хэлбэртэй байна";
   }
-  if (values.is_featured && !values.image_url) errors.image_url = "Hero-д харуулах бол үндсэн зураг заавал оруулна";
+  if (values.is_featured && !values.image_url) errors.image_url = "Онцлох бараанд үндсэн зураг заавал оруулна";
 
   if (Object.keys(errors).length) return { ok: false, errors, message: "Талбаруудаа шалгана уу." };
 
@@ -132,6 +132,7 @@ export async function saveCategory(prevState, formData) {
     name,
     slug: slugify(text(formData, "slug") || name),
     sort_order: int(formData, "sort_order") || 0,
+    image_url: text(formData, "image_url") || null,
   };
   if (!values.slug) return { ok: false, message: "Холбоос үүсгэж чадсангүй. Латин үсгээр slug оруулна уу." };
 
@@ -145,6 +146,17 @@ export async function saveCategory(prevState, formData) {
   refreshStore();
   revalidatePath("/admin/categories");
   return { ok: true, message: id ? "Хадгаллаа" : "Ангилал нэмэгдлээ", key: Date.now() };
+}
+
+export async function toggleCategoryHome(formData) {
+  const { supabase } = await requireAdmin();
+  const { error } = await supabase
+    .from("categories")
+    .update({ show_on_home: text(formData, "value") === "true" })
+    .eq("id", text(formData, "id"));
+  if (error) throw new Error(error.message);
+  refreshStore();
+  revalidatePath("/admin/categories");
 }
 
 export async function deleteCategory(formData) {
@@ -190,6 +202,8 @@ export async function saveSettings(prevState, formData) {
     address: text(formData, "address"),
     instagram_url: text(formData, "instagram_url"),
     facebook_url: text(formData, "facebook_url"),
+    hero_image_url: text(formData, "hero_image_url"),
+    hero_link: text(formData, "hero_link"),
   };
   if (Number.isNaN(values.shipping_fee) || values.shipping_fee < 0 || Number.isNaN(values.free_shipping_over) || values.free_shipping_over < 0) {
     return { ok: false, message: "Хүргэлтийн дүнгээ зөв оруулна уу." };
@@ -198,6 +212,9 @@ export async function saveSettings(prevState, formData) {
     if (values[key] && !/^https?:\/\//.test(values[key])) {
       return { ok: false, message: "Сошиал холбоос https:// -ээр эхэлнэ." };
     }
+  }
+  if (values.hero_link && !/^(https?:\/\/|\/(?!\/))/.test(values.hero_link)) {
+    return { ok: false, message: "Баннерын холбоос /shop эсвэл https:// хэлбэртэй байна." };
   }
 
   const { error } = await supabase.from("settings").update(values).eq("id", 1);

@@ -1017,11 +1017,86 @@ a.stat:hover {
   font-size: 13px;
 }
 
+/* ---------- Image upload field (ImageField.jsx) ---------- */
+
+.image-field {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.image-field-drop {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  overflow: hidden;
+  border: 2px dashed var(--line-strong);
+  border-radius: var(--radius);
+  background: #fafafa;
+  color: var(--muted);
+  transition: border-color 0.2s;
+}
+
+.image-field-drop:hover {
+  border-color: var(--ink);
+}
+
+.image-field-drop.has-image {
+  border-style: solid;
+  border-color: var(--line);
+}
+
+.image-field-drop img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.image-field-wide .image-field-drop {
+  aspect-ratio: 2400 / 560;
+  min-height: 140px;
+}
+
+.image-field-thumb .image-field-drop {
+  width: 56px;
+  height: 56px;
+}
+
+.image-field-clear {
+  position: absolute;
+  top: -6px;
+  left: 44px;
+  width: 20px;
+  height: 20px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--ink);
+  color: #fff;
+}
+
+.image-field .error-text {
+  font-size: 12px;
+  color: var(--red);
+}
+
+.settings-form .card-pad > .image-field + .field {
+  margin-top: 16px;
+}
+
+.settings-form .card-pad > .muted + .image-field {
+  margin-top: 12px;
+}
+
 /* ---------- Categories ---------- */
 
 .category-form {
   display: grid;
-  grid-template-columns: 1.4fr 1fr 90px auto;
+  grid-template-columns: 56px 1.4fr 1fr 90px auto;
   gap: 10px;
   align-items: center;
 }
@@ -1037,7 +1112,7 @@ a.stat:hover {
 
 .category-head {
   display: grid;
-  grid-template-columns: 1.4fr 1fr 90px auto;
+  grid-template-columns: 56px 1.4fr 1fr 90px auto;
   gap: 10px;
   padding: 12px 20px;
   font-size: 12px;
@@ -1047,8 +1122,8 @@ a.stat:hover {
   letter-spacing: 0.04em;
   background: #fafafa;
   border-bottom: 1px solid var(--line);
-  /* line up with the edit form inside each row (row = form | count 80px | delete 40px) */
-  padding-right: calc(20px + 80px + 40px + 24px);
+  /* line up with the edit form inside each row (row = form | home 64px | count 80px | delete 40px) */
+  padding-right: calc(20px + 64px + 80px + 40px + 36px);
 }
 
 .category-list {
@@ -1057,11 +1132,23 @@ a.stat:hover {
 
 .category-list li {
   display: grid;
-  grid-template-columns: 1fr 80px 40px;
+  grid-template-columns: 1fr 64px 80px 40px;
   align-items: center;
   gap: 12px;
   padding: 12px 20px;
   border-bottom: 1px solid var(--line);
+}
+
+.category-home {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.category-home small {
+  font-size: 11px;
+  color: var(--muted);
 }
 
 .category-list li:last-child {
@@ -1280,10 +1367,10 @@ a.stat:hover {
   }
 
   .category-list li {
-    grid-template-columns: 1fr auto;
+    grid-template-columns: 1fr auto auto;
   }
 
-  .category-list li .muted {
+  .category-list li > .muted {
     display: none;
   }
 

@@ -1,14 +1,12 @@
 "use client";
 
-/* Storefront header in the Thermos brand style: a dark announcement strip, then a sticky
-   white bar with the red wordmark, uppercase category navigation and account / cart icons.
+/* Storefront header in the Thermos brand style: a sticky white bar with the red logo, uppercase category navigation and account / cart icons.
    Below 960px the navigation moves into a slide-in drawer. */
 
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { formatPrice } from "../../lib/format";
 import { useCart } from "../cart/CartProvider";
 import Icon from "../Icons";
 import { useSignedIn } from "./useSignedIn";
@@ -19,7 +17,7 @@ const Logo = ({ priority = false }) => (
   <Image src={LOGO_SRC} alt="Thermos" width={300} height={112} className="logo-img" priority={priority} />
 );
 
-export default function StoreHeader({ categories = [], freeShippingOver = 0, instagramUrl }) {
+export default function StoreHeader({ categories = [], instagramUrl }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const activeCategory = pathname === "/shop" ? searchParams.get("category") : null;
@@ -66,20 +64,6 @@ export default function StoreHeader({ categories = [], freeShippingOver = 0, ins
 
   return (
     <>
-      <div className="announce">
-        <div className="container announce-inner">
-          <span>
-            <Icon name="truck" size={16} />
-            {freeShippingOver > 0
-              ? <>{formatPrice(freeShippingOver)}-с дээш захиалгад хүргэлт <b>үнэгүй</b></>
-              : <>Улаанбаатарт 24–48 цагт хүргэнэ</>}
-          </span>
-          <span className="announce-extra">
-            <Icon name="shield" size={16} /> 1 жилийн баталгаа
-          </span>
-        </div>
-      </div>
-
       <header className={`sh${scrolled ? " is-scrolled" : ""}`}>
         <div className="container sh-inner">
           <button type="button" className="icon-btn sh-burger" onClick={() => setOpen(true)} aria-label="Цэс нээх" aria-expanded={open}>

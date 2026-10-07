@@ -139,7 +139,7 @@ export default function ProductForm({ product, categories }) {
     setUploadError("");
     setUploading("gallery");
     try {
-      const urls = await Promise.all(files.map(uploadImage));
+      const urls = await Promise.all(files.map((f) => uploadImage(f)));
       setV((prev) => ({ ...prev, gallery: [...prev.gallery, ...urls] }));
     } catch (err) {
       setUploadError(`Зураг хуулахад алдаа гарлаа: ${err.message}`);
@@ -216,7 +216,7 @@ export default function ProductForm({ product, categories }) {
                       <span className="dropzone-empty">
                         <Icon name="upload" size={26} />
                         <b>Зураг сонгох</b>
-                        <small>PNG (арын фонгүй) · 5MB хүртэл</small>
+                        <small>PNG (арын фонгүй) · 15MB хүртэл</small>
                       </span>
                     )}
                     {uploading === "main" && <span className="dropzone-busy">Хуулж байна…</span>}
@@ -293,13 +293,13 @@ export default function ProductForm({ product, categories }) {
               </label>
               <label className="toggle-row">
                 <span>
-                  <b>Нүүр хуудасны hero-д</b>
-                  <small>Том карусельд гарна</small>
+                  <b>Онцлох бараа</b>
+                  <small>Нүүр хуудасны “Бидний сонголт” хэсэгт гарна</small>
                 </span>
                 <input type="checkbox" name="is_featured" className="toggle" checked={v.is_featured} onChange={set("is_featured")} />
               </label>
               {v.is_featured && (
-                <Field label="Hero дараалал" name="hero_order" error={errors.hero_order} hint="Бага тоо эхэнд гарна">
+                <Field label="Онцлох дараалал" name="hero_order" error={errors.hero_order} hint="Бага тоо эхэнд гарна">
                   <input id="hero_order" name="hero_order" className="input" inputMode="numeric" value={v.hero_order} onChange={set("hero_order")} />
                 </Field>
               )}

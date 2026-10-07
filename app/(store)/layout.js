@@ -18,7 +18,6 @@ export default async function StoreLayout({ children }) {
     <CartProvider>
       <StoreHeader
         categories={categories}
-        freeShippingOver={settings.free_shipping_over}
         instagramUrl={settings.instagram_url}
       />
       {children}

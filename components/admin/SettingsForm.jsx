@@ -2,6 +2,7 @@
 
 import { useActionState } from "react";
 import { saveSettings } from "../../app/admin/actions";
+import ImageField from "./ImageField";
 
 export default function SettingsForm({ settings }) {
   const [state, formAction, pending] = useActionState(saveSettings, null);
@@ -9,6 +10,19 @@ export default function SettingsForm({ settings }) {
 
   return (
     <form action={formAction} className="settings-form">
+      <section className="card card-pad">
+        <h2 className="card-title">Нүүр хуудасны баннер</h2>
+        <p className="muted small">
+          Нүүр хуудасны хамгийн дээд талд бүтэн өргөнөөрөө харагдана. Өргөн, нарийн зураг тохиромжтой — ойролцоогоор
+          2400×560px (JPG/WEBP, 15MB хүртэл).
+        </p>
+        <ImageField name="hero_image_url" defaultValue={s.hero_image_url} folder="banners" hint="2400×560px орчим" />
+        <div className="field">
+          <label htmlFor="hero_link">Баннер дээр дарахад очих хуудас (заавал биш)</label>
+          <input id="hero_link" name="hero_link" className="input" defaultValue={s.hero_link} placeholder="/shop?category=water-bottle" />
+        </div>
+      </section>
+
       <section className="card card-pad">
         <h2 className="card-title">Хүргэлт</h2>
         <div className="grid-2">

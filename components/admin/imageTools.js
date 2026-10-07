@@ -3,19 +3,19 @@
 import { createClient } from "../../lib/supabase/browser";
 
 export const BUCKET = "product-images";
-const MAX_BYTES = 5 * 1024 * 1024;
+const MAX_BYTES = 15 * 1024 * 1024;
 const TYPES = ["image/png", "image/jpeg", "image/webp"];
 
 export function validateImage(file) {
   if (!TYPES.includes(file.type)) return "Зөвхөн PNG, JPG, WEBP зураг оруулна.";
-  if (file.size > MAX_BYTES) return "Зургийн хэмжээ 5MB-аас ихгүй байна.";
+  if (file.size > MAX_BYTES) return "Зургийн хэмжээ 15MB-аас ихгүй байна.";
   return null;
 }
 
-export async function uploadImage(file) {
+export async function uploadImage(file, folder = "products") {
   const supabase = createClient();
   const ext = file.type === "image/png" ? "png" : file.type === "image/webp" ? "webp" : "jpg";
-  const path = `products/${crypto.randomUUID()}.${ext}`;
+  const path = `${folder}/${crypto.randomUUID()}.${ext}`;
   const { error } = await supabase.storage.from(BUCKET).upload(path, file, {
     cacheControl: "31536000",
     contentType: file.type,

@@ -2,118 +2,74 @@ import Image from "next/image";
 import Link from "next/link";
 import Icon from "../../components/Icons";
 import ProductCard from "../../components/store/ProductCard";
-import { getCategories, getFeaturedProducts, getProducts } from "../../lib/data";
-import { formatPrice } from "../../lib/format";
-
-const HERO_MAX = 3;
+import { getCategories, getFeaturedProducts, getProducts, getSettings } from "../../lib/data";
 
 export default async function HomePage() {
-  const [featured, products, categories] = await Promise.all([
+  const [featured, products, categories, settings] = await Promise.all([
     getFeaturedProducts(),
     getProducts({ sort: "newest" }),
     getCategories(),
+    getSettings(),
   ]);
 
   const latest = products.slice(0, 8);
-  const lineup = (featured.length ? featured : products).filter((p) => p.image_url).slice(0, HERO_MAX);
-  const center = Math.floor(lineup.length / 2);
   const picks = featured.filter((p) => !latest.slice(0, 4).some((l) => l.id === p.id)).slice(0, 4);
 
-  // One representative photo per category for the shop-by-category tiles
-  const categoryTiles = categories
-    .map((c) => {
-      const items = products.filter((p) => p.category?.slug === c.slug);
-      return { ...c, count: items.length, image: items.find((p) => p.image_url)?.image_url };
-    })
-    .filter((c) => c.count > 0);
+  // Categories switched on in /admin/categories become the photo tiles under the banner
+  // (admin sort order). Until the show_on_home migration runs, the first four are used.
+  // Without an uploaded photo a tile falls back to a product cut-out from that category.
+  const hasHomeFlag = categories.some((c) => "show_on_home" in c);
+  const homeCategories = hasHomeFlag ? categories.filter((c) => c.show_on_home) : categories.slice(0, 4);
+  const tiles = homeCategories.map((c) => ({
+    ...c,
+    fallback: c.image_url ? null : products.find((p) => p.category?.slug === c.slug && p.image_url)?.image_url,
+  }));
+
+  const bannerImage = settings.hero_image_url ? (
+    <Image
+      src={settings.hero_image_url}
+      alt="Thermos"
+      fill
+      priority
+      sizes="100vw"
+      className="home-banner-img"
+    />
+  ) : (
+    <div className="home-banner-fallback">
+      <span className="eyebrow eyebrow-light">Вакуум тусгаарлалттай термос</span>
+      <h1>
+        Халуун нь халуунаараа. <span>Хүйтэн нь хүйтнээрээ.</span>
+      </h1>
+    </div>
+  );
 
   return (
     <main>
-      {/* ---------- Static hero ---------- */}
-      <section className="hero">
-        <div className="container hero-inner">
-          <div className="hero-copy">
-            <span className="eyebrow eyebrow-light">Вакуум тусгаарлалттай термос</span>
-            <h1>
-              Халуун нь халуунаараа.
-              <span>Хүйтэн нь хүйтнээрээ.</span>
-            </h1>
-            <p>
-              Монголын −40° өвөл, +35° зунд ч ундаа тань хүссэн хэмдээ. 18/8 зэвэрдэггүй ган, гоожихгүй таглаа,
-              өдөр бүрийн хэрэглээнд.
-            </p>
-            <div className="hero-ctas">
-              <Link href="/shop" className="btn btn-primary btn-lg">
-                Дэлгүүр үзэх <Icon name="arrowRight" />
-              </Link>
-              <Link href="#new" className="btn btn-outline-light btn-lg">Шинэ ирэлт</Link>
-            </div>
-            <dl className="hero-stats">
-              <div><dt>Халуун</dt><dd>12<small>цаг</small></dd></div>
-              <div><dt>Хүйтэн</dt><dd>24<small>цаг</small></dd></div>
-              <div><dt>Ган</dt><dd>18/8</dd></div>
-            </dl>
-          </div>
+      {/* ---------- Banner + category tiles ---------- */}
+      <section className="home-hero">
+        {settings.hero_link ? (
+          <Link href={settings.hero_link} className="home-banner">{bannerImage}</Link>
+        ) : (
+          <div className="home-banner">{bannerImage}</div>
+        )}
 
-          {lineup.length > 0 && (
-            <div className="hero-lineup" aria-label="Онцлох бүтээгдэхүүн">
-              {lineup.map((p, i) => (
-                <Link
-                  key={p.id}
-                  href={`/products/${p.slug}`}
-                  className="hero-item"
-                  style={{ "--h": `${100 - Math.abs(i - center) * 13}%`, "--glow": p.accent }}
-                  title={p.name}
-                >
-                  <Image
-                    src={p.image_url}
-                    alt={p.name}
-                    width={500}
-                    height={900}
-                    sizes="(max-width: 900px) 22vw, 180px"
-                    priority={i === center}
-                  />
-                  <span className="hero-tag">
-                    <b>{p.name}</b>
-                    {formatPrice(p.price)}
-                  </span>
-                </Link>
-              ))}
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* ---------- Shop by category ---------- */}
-      {categoryTiles.length > 0 && (
-        <section className="section">
+        {tiles.length > 0 && (
           <div className="container">
-            <div className="section-head">
-              <div>
-                <span className="eyebrow">Ангилал</span>
-                <h2>Хэрэгцээгээрээ сонго</h2>
-              </div>
-              <Link href="/shop" className="link-arrow">
-                Бүгдийг үзэх <Icon name="arrowRight" size={16} />
-              </Link>
-            </div>
-            <div className="cat-grid">
-              {categoryTiles.map((c) => (
-                <Link key={c.id} href={`/shop?category=${c.slug}`} className="cat-tile">
-                  <span className="cat-media">
-                    {c.image && <Image src={c.image} alt="" width={300} height={540} sizes="160px" />}
-                  </span>
-                  <span className="cat-label">
-                    <b>{c.name}</b>
-                    <small>{c.count} бүтээгдэхүүн</small>
-                  </span>
-                  <Icon name="arrowRight" size={18} className="cat-arrow" />
+            <nav className="home-cats" aria-label="Ангилал">
+              {tiles.map((c, i) => (
+                <Link key={c.id} href={`/shop?category=${c.slug}`} className={`home-cat${c.image_url ? "" : " is-fallback"}`}>
+                  {c.image_url ? (
+                    <Image src={c.image_url} alt="" fill sizes="(max-width: 640px) 50vw, 25vw" className="home-cat-img" priority={i < 2} />
+                  ) : (
+                    c.fallback && <Image src={c.fallback} alt="" fill sizes="(max-width: 640px) 50vw, 25vw" className="home-cat-cutout" />
+                  )}
+                  <span className="home-cat-name">{c.name}</span>
                 </Link>
               ))}
-            </div>
+            </nav>
           </div>
-        </section>
-      )}
+        )}
+      </section>
 
       {/* ---------- New arrivals ---------- */}
       <section className="section section-tight" id="new">
@@ -188,22 +144,6 @@ export default async function HomePage() {
         </section>
       )}
 
-      {/* ---------- Closing banner ---------- */}
-      <section className="section section-tight">
-        <div className="container">
-          <div className="banner">
-            <div>
-              <span className="eyebrow eyebrow-light">Захиалга</span>
-              <h2>Өнөөдөр захиалаад, маргааш хэрэглэ</h2>
-              <p>Захиалгаа өгөөд дугаараа хадгалаарай — явцаа хэзээ ч шалгах боломжтой.</p>
-            </div>
-            <div className="banner-ctas">
-              <Link href="/shop" className="btn btn-light btn-lg">Дэлгүүр үзэх</Link>
-              <Link href="/track" className="btn btn-outline-light btn-lg">Захиалга шалгах</Link>
-            </div>
-          </div>
-        </div>
-      </section>
     </main>
   );
 }

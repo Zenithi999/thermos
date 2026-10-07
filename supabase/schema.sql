@@ -115,6 +115,12 @@ create table if not exists public.settings (
 );
 insert into public.settings (id) values (1) on conflict do nothing;
 
+-- Home page banner + category tile photos (managed from /admin)
+alter table public.categories add column if not exists image_url text;
+alter table public.categories add column if not exists show_on_home boolean not null default false;
+alter table public.settings add column if not exists hero_image_url text default '';
+alter table public.settings add column if not exists hero_link text default '';
+
 -- ---------- Helpers ----------
 
 create or replace function public.is_admin()

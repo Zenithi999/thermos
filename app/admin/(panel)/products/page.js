@@ -51,7 +51,7 @@ export default async function AdminProductsPage({ searchParams }) {
         <div>
           <h1>Бүтээгдэхүүн</h1>
           <p className="muted">
-            {products.length} бүтээгдэхүүн · Hero-д {featuredCount} харагдаж байна
+            {products.length} бүтээгдэхүүн · Онцлох {featuredCount}
           </p>
         </div>
         <Link href="/admin/products/new" className="btn btn-primary">
@@ -81,7 +81,7 @@ export default async function AdminProductsPage({ searchParams }) {
                   <th className="num">Үнэ</th>
                   <th className="num">Үлдэгдэл</th>
                   <th className="center">Идэвхтэй</th>
-                  <th className="center">Hero</th>
+                  <th className="center">Онцлох</th>
                   <th />
                 </tr>
               </thead>
@@ -112,7 +112,7 @@ export default async function AdminProductsPage({ searchParams }) {
                         id={p.id}
                         field="is_featured"
                         value={p.is_featured}
-                        label="Нүүр хуудасны hero-д харуулах"
+                        label="Онцлох бараа (нүүр хуудсанд)"
                         disabled={!p.image_url && !p.is_featured}
                       />
                     </td>
