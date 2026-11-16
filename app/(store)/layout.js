@@ -16,10 +16,7 @@ export default async function StoreLayout({ children }) {
 
   return (
     <CartProvider>
-      <StoreHeader
-        categories={categories}
-        instagramUrl={settings.instagram_url}
-      />
+      <StoreHeader instagramUrl={settings.instagram_url} />
       {children}
       <SiteFooter settings={settings} categories={categories} />
     </CartProvider>

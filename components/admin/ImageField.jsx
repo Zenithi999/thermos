@@ -1,14 +1,15 @@
 "use client";
 
 /* Upload one photo to Supabase Storage and submit its URL with the surrounding form
-   through a hidden input. variant="wide" is the home banner, "thumb" a small square
-   used inside the category rows. */
+   through a hidden input. variant="wide" is a banner, "card" a 4:3 preview and "thumb"
+   a small square used inside the category rows. */
 
 import { useRef, useState } from "react";
 import Icon from "../Icons";
 import { uploadImage, validateImage } from "./imageTools";
 
-export default function ImageField({ name, defaultValue = "", folder, variant = "wide", label, hint }) {
+// fallback: picture shown (greyed "Үндсэн зураг" tag) while nothing is uploaded; it is not submitted
+export default function ImageField({ name, defaultValue = "", folder, variant = "wide", label, hint, fallback }) {
   const input = useRef(null);
   const [url, setUrl] = useState(defaultValue || "");
   const [busy, setBusy] = useState(false);
@@ -42,9 +43,12 @@ export default function ImageField({ name, defaultValue = "", folder, variant = 
         aria-label={label || "Зураг оруулах"}
         title={label || "Зураг оруулах"}
       >
-        {url ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={url} alt="" />
+        {url || fallback ? (
+          <>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={url || fallback} alt="" />
+            {!url && <span className="image-field-default">Үндсэн зураг</span>}
+          </>
         ) : variant === "thumb" ? (
           <Icon name="image" size={20} />
         ) : (
@@ -56,13 +60,13 @@ export default function ImageField({ name, defaultValue = "", folder, variant = 
         )}
         {busy && <span className="dropzone-busy">{variant === "thumb" ? "…" : "Хуулж байна…"}</span>}
       </button>
-      {url && variant === "wide" && (
+      {url && variant !== "thumb" && (
         <div className="image-actions">
           <button type="button" className="btn btn-outline btn-sm" onClick={() => input.current?.click()} disabled={busy}>
             Солих
           </button>
           <button type="button" className="btn btn-ghost btn-sm" onClick={() => setUrl("")} disabled={busy}>
-            Устгах
+            {fallback ? "Үндсэнд буцаах" : "Устгах"}
           </button>
         </div>
       )}

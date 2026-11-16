@@ -35,6 +35,8 @@ export default function SiteFooter({ settings, categories = [] }) {
               <li key={c.id}><Link href={`/shop?category=${c.slug}`}>{c.name}</Link></li>
             ))}
             <li><Link href="/shop?sort=newest">Шинэ ирэлт</Link></li>
+            <li><Link href="/brand">Брэндийн тухай</Link></li>
+            <li><Link href="/about-products">Бүтээгдэхүүний тухай</Link></li>
           </ul>
         </div>
 

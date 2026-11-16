@@ -1061,6 +1061,61 @@ a.stat:hover {
   min-height: 140px;
 }
 
+.image-field-default {
+  position: absolute;
+  left: 8px;
+  bottom: 8px;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  background: rgba(29, 30, 34, 0.75);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.image-field-card .image-field-drop {
+  aspect-ratio: 4 / 3;
+}
+
+.image-field-card .image-field-drop img {
+  object-fit: contain;
+  background: #fff;
+}
+
+.page-images-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.page-images-head .card-title {
+  margin-bottom: 0;
+}
+
+.page-images-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 20px 16px;
+}
+
+.page-image-slot {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.page-image-slot.is-wide {
+  grid-column: 1 / -1;
+}
+
+.page-image-slot .hint {
+  font-size: 12px;
+  color: var(--muted);
+}
+
 .image-field-thumb .image-field-drop {
   width: 56px;
   height: 56px;

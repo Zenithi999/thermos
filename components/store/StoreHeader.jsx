@@ -17,10 +17,9 @@ const Logo = ({ priority = false }) => (
   <Image src={LOGO_SRC} alt="Thermos" width={300} height={112} className="logo-img" priority={priority} />
 );
 
-export default function StoreHeader({ categories = [], instagramUrl }) {
+export default function StoreHeader({ instagramUrl }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const activeCategory = pathname === "/shop" ? searchParams.get("category") : null;
   const { count, hydrated } = useCart();
   const signedIn = useSignedIn();
   const [open, setOpen] = useState(false);
@@ -48,12 +47,9 @@ export default function StoreHeader({ categories = [], instagramUrl }) {
   }, [open]);
 
   const links = [
-    { href: "/shop", label: "Бүх бүтээгдэхүүн", active: pathname === "/shop" && !activeCategory },
-    ...categories.map((c) => ({
-      href: `/shop?category=${c.slug}`,
-      label: c.name,
-      active: activeCategory === c.slug,
-    })),
+    { href: "/shop", label: "Бүх бүтээгдэхүүн", active: pathname.startsWith("/shop") || pathname.startsWith("/products") },
+    { href: "/brand", label: "Брэндийн тухай", active: pathname.startsWith("/brand") },
+    { href: "/about-products", label: "Бүтээгдэхүүний тухай", active: pathname.startsWith("/about-products") },
     { href: "/track", label: "Захиалга шалгах", active: pathname.startsWith("/track") },
   ];
 

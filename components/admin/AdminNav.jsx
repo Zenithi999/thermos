@@ -11,6 +11,7 @@ const LINKS = [
   { href: "/admin/orders", label: "Захиалгууд", icon: "bag", badge: "orders" },
   { href: "/admin/products", label: "Бүтээгдэхүүн", icon: "box" },
   { href: "/admin/categories", label: "Ангилал", icon: "tag" },
+  { href: "/admin/pages", label: "Хуудасны зураг", icon: "image" },
   { href: "/admin/settings", label: "Тохиргоо", icon: "settings" },
 ];
 

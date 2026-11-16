@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireAdmin } from "../../lib/auth";
 import { slugify } from "../../lib/format";
+import { ALL_SLOT_KEYS } from "../../lib/pageContent";
 import { createClient } from "../../lib/supabase/server";
 
 const HEX_RE = /^#[0-9a-fA-F]{6}$/;
@@ -188,6 +189,32 @@ export async function updatePaymentStatus(formData) {
   await supabase.from("orders").update({ payment_status }).eq("id", id);
   revalidatePath(`/admin/orders/${id}`);
   revalidatePath("/admin/orders");
+}
+
+// ---------- Page images (/admin/pages) ----------
+
+export async function savePageImages(prevState, formData) {
+  const { supabase } = await requireAdmin();
+  const page_images = {};
+  for (const key of ALL_SLOT_KEYS) {
+    const url = text(formData, `img_${key}`);
+    if (!url) continue;
+    if (!/^https:\/\//.test(url)) return { ok: false, message: "Зургийн хаяг буруу байна." };
+    page_images[key] = url;
+  }
+
+  const { error } = await supabase.from("settings").update({ page_images }).eq("id", 1);
+  if (error) {
+    return {
+      ok: false,
+      message: error.message.includes("page_images")
+        ? "Өгөгдлийн санд page_images багана алга. supabase/migrations/2026-11-16_page_images.sql-г ажиллуулна уу."
+        : error.message,
+    };
+  }
+  refreshStore();
+  revalidatePath("/admin/pages");
+  return { ok: true, message: "Зургууд хадгалагдлаа", key: Date.now() };
 }
 
 // ---------- Settings ----------

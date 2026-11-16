@@ -99,6 +99,15 @@ const PATHS = {
     </>
   ),
   star:<path d="M12 3.5l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8-4.2-4.1 5.9-.9z" />,
+  trophy: <path d="M8 4h8v5a4 4 0 0 1-8 0zM8 6H4.5a3 3 0 0 0 3.5 4M16 6h3.5a3 3 0 0 1-3.5 4M12 13v4M8.5 20h7M9.5 17h5v3h-5z" />,
+  badge: (
+    <>
+      <circle cx="12" cy="9" r="5.5" />
+      <path d="M12 6.5l.9 1.8 2 .3-1.4 1.4.3 2-1.8-.9-1.8.9.3-2-1.4-1.4 2-.3zM8.5 13.5L7 21l5-2.5 5 2.5-1.5-7.5" />
+    </>
+  ),
+  crown: <path d="M4 8l4 4 4-7 4 7 4-4-1.5 10h-13zM5.5 21h13" />,
+  factory: <path d="M3 20V10l5 3V10l5 3V10l5 3V4h3v16zM7 17h2M12 17h2M17 17h2" />,
 };
 
 export default function Icon({ name, size = 18, className = "", strokeWidth = 1.7, ...rest }) {
