@@ -1,0 +1,202 @@
+/* =========================================================
+   New Year decorations (components/store/Festive.jsx).
+   Shown only during the season — see lib/festive.js.
+   ========================================================= */
+
+/* ---------- Header garland + curtain lights ---------- */
+
+.fx-lights {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  height: 80px;
+  margin-top: -6px;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.fx-wire {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 34px;
+  overflow: visible;
+}
+
+.fx-wire path {
+  fill: none;
+  stroke: #2d4a35;
+  stroke-width: 1.6;
+}
+
+/* colours: Thermos red, gold, pine green, ice blue, warm white */
+.fx-red { --c: #ff2e36; --g: rgba(255, 46, 54, 0.75); }
+.fx-gold { --c: #ffc145; --g: rgba(255, 193, 69, 0.8); }
+.fx-green { --c: #39d47a; --g: rgba(57, 212, 122, 0.7); }
+.fx-ice { --c: #6fd0ff; --g: rgba(111, 208, 255, 0.75); }
+.fx-warm { --c: #ffe7a3; --g: rgba(255, 214, 120, 0.85); }
+
+.fx-bulb {
+  position: absolute;
+  width: 9px;
+  height: 14px;
+  margin-left: -4.5px;
+  border-radius: 50% 50% 46% 46% / 40% 40% 60% 60%;
+  background: radial-gradient(circle at 35% 30%, #fff 0 18%, var(--c) 45%);
+  box-shadow: 0 0 8px 2px var(--g), 0 0 18px 4px var(--g);
+  animation: fx-twinkle var(--t, 2s) ease-in-out var(--d, 0s) infinite alternate;
+}
+
+/* socket */
+.fx-bulb::before {
+  content: "";
+  position: absolute;
+  top: -4px;
+  left: 50%;
+  width: 6px;
+  height: 5px;
+  margin-left: -3px;
+  border-radius: 1px;
+  background: #2f3338;
+}
+
+/* curtain strand: a thin wire with tiny LEDs and a glowing tip */
+.fx-strand {
+  position: absolute;
+  top: 3px;
+  width: 1px;
+  margin-left: -0.5px;
+  background: rgba(45, 74, 53, 0.55);
+  transform-origin: top;
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.4s;
+}
+
+.fx-strand::before,
+.fx-strand::after {
+  content: "";
+  position: absolute;
+  left: -2px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--c);
+  box-shadow: 0 0 6px 2px var(--g);
+  animation: fx-twinkle var(--t, 2.4s) ease-in-out var(--d, 0s) infinite alternate;
+}
+
+.fx-strand::before {
+  top: 45%;
+  animation-delay: calc(var(--d, 0s) + 0.7s);
+}
+
+.fx-strand::after {
+  bottom: -3px;
+}
+
+@keyframes fx-twinkle {
+  0% {
+    opacity: 1;
+    filter: brightness(1.15);
+  }
+  60% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0.35;
+    filter: brightness(0.8);
+    box-shadow: 0 0 3px 0 var(--g);
+  }
+}
+
+/* once the page scrolls, the hanging strands fold away and only the garland stays */
+.sh.is-scrolled .fx-strand {
+  opacity: 0;
+  transform: scaleY(0);
+}
+
+/* phones: half as many lights so the garland doesn't look crowded */
+@media (max-width: 640px) {
+  .fx-bulb:nth-of-type(even),
+  .fx-strand:nth-of-type(odd) {
+    display: none;
+  }
+
+  .fx-lights {
+    height: 52px;
+  }
+
+  /* shorter strands so they don't hang over the first line of content */
+  .fx-strand {
+    transform: scaleY(0.55);
+  }
+}
+
+/* ---------- Santa hat on the logo ---------- */
+
+.logo {
+  position: relative;
+}
+
+.fx-hat {
+  position: absolute;
+  top: -11px;
+  left: -13px;
+  width: 34px;
+  height: auto;
+  transform: rotate(-22deg);
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.25));
+  pointer-events: none;
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.logo:hover .fx-hat {
+  transform: rotate(-30deg) translateY(-2px);
+}
+
+@media (max-width: 960px) {
+  .fx-hat {
+    top: -9px;
+    left: -11px;
+    width: 28px;
+  }
+}
+
+/* ---------- Snowfall over the home banner ---------- */
+
+.fx-snow {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.fx-snow span {
+  position: absolute;
+  top: -12px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.8);
+  animation: fx-fall var(--t, 10s) linear var(--d, 0s) infinite;
+}
+
+@keyframes fx-fall {
+  to {
+    transform: translate(var(--drift, 0), calc(100% + 480px));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fx-bulb,
+  .fx-strand::before,
+  .fx-strand::after {
+    animation: none;
+  }
+
+  .fx-snow {
+    display: none;
+  }
+}

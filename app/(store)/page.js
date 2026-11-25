@@ -1,8 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
 import Icon from "../../components/Icons";
+import { Snowfall } from "../../components/store/Festive";
 import ProductCard from "../../components/store/ProductCard";
 import { getCategories, getFeaturedProducts, getProducts, getSettings } from "../../lib/data";
+import { isFestiveSeason } from "../../lib/festive";
 
 export default async function HomePage() {
   const [featured, products, categories, settings] = await Promise.all([
@@ -43,14 +45,16 @@ export default async function HomePage() {
     </div>
   );
 
+  const snow = isFestiveSeason() ? <Snowfall /> : null;
+
   return (
     <main>
       {/* ---------- Banner + category tiles ---------- */}
       <section className="home-hero">
         {settings.hero_link ? (
-          <Link href={settings.hero_link} className="home-banner">{bannerImage}</Link>
+          <Link href={settings.hero_link} className="home-banner">{bannerImage}{snow}</Link>
         ) : (
-          <div className="home-banner">{bannerImage}</div>
+          <div className="home-banner">{bannerImage}{snow}</div>
         )}
 
         {tiles.length > 0 && (

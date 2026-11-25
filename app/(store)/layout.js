@@ -1,9 +1,11 @@
 import "../../styles/store.css";
+import "../../styles/festive.css";
 import { CartProvider } from "../../components/cart/CartProvider";
 import SetupNotice from "../../components/SetupNotice";
 import SiteFooter from "../../components/store/SiteFooter";
 import StoreHeader from "../../components/store/StoreHeader";
 import { getCategories, getSettings } from "../../lib/data";
+import { isFestiveSeason } from "../../lib/festive";
 import { isSupabaseConfigured } from "../../lib/supabase/env";
 
 // Product data, stock and prices change from /admin, so storefront pages render per request.
@@ -16,7 +18,7 @@ export default async function StoreLayout({ children }) {
 
   return (
     <CartProvider>
-      <StoreHeader instagramUrl={settings.instagram_url} />
+      <StoreHeader instagramUrl={settings.instagram_url} festive={isFestiveSeason()} />
       {children}
       <SiteFooter settings={settings} categories={categories} />
     </CartProvider>

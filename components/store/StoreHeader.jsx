@@ -9,6 +9,7 @@ import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useCart } from "../cart/CartProvider";
 import Icon from "../Icons";
+import { HeaderLights, SantaHat } from "./Festive";
 import { useSignedIn } from "./useSignedIn";
 
 const LOGO_SRC = "/images/logo_2x_25955799-cffe-4c70-98d1-3362d077a1ee.avif";
@@ -17,7 +18,7 @@ const Logo = ({ priority = false }) => (
   <Image src={LOGO_SRC} alt="Thermos" width={300} height={112} className="logo-img" priority={priority} />
 );
 
-export default function StoreHeader({ instagramUrl }) {
+export default function StoreHeader({ instagramUrl, festive = false }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const { count, hydrated } = useCart();
@@ -67,6 +68,7 @@ export default function StoreHeader({ instagramUrl }) {
 
           <Link href="/" className="logo" aria-label="Thermos — нүүр хуудас">
             <Logo priority />
+            {festive && <SantaHat />}
           </Link>
 
           <nav className="sh-nav" aria-label="Үндсэн цэс">
@@ -98,6 +100,7 @@ export default function StoreHeader({ instagramUrl }) {
             </Link>
           </div>
         </div>
+        {festive && <HeaderLights />}
       </header>
 
       <div className={`drawer${open ? " open" : ""}`} aria-hidden={!open} inert={!open}>
