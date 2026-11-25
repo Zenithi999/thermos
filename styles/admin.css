@@ -1017,6 +1017,22 @@ a.stat:hover {
   font-size: 13px;
 }
 
+.admin-head-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.image-cleanup {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
 /* ---------- Image upload field (ImageField.jsx) ---------- */
 
 .image-field {

@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import ImageCleanup from "../../../../components/admin/ImageCleanup";
 import Icon from "../../../../components/Icons";
 import { requireAdmin } from "../../../../lib/auth";
 import { formatPrice } from "../../../../lib/format";
@@ -54,9 +55,12 @@ export default async function AdminProductsPage({ searchParams }) {
             {products.length} бүтээгдэхүүн · Онцлох {featuredCount}
           </p>
         </div>
-        <Link href="/admin/products/new" className="btn btn-primary">
-          <Icon name="plus" /> Шинээр нэмэх
-        </Link>
+        <div className="admin-head-actions">
+          <ImageCleanup products={products.map(({ id, image_url }) => ({ id, image_url }))} />
+          <Link href="/admin/products/new" className="btn btn-primary">
+            <Icon name="plus" /> Шинээр нэмэх
+          </Link>
+        </div>
       </header>
 
       {saved && <div className="alert alert-success flash">“{saved}” хадгалагдлаа.</div>}

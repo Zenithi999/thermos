@@ -95,6 +95,17 @@ export async function saveProduct(prevState, formData) {
   redirect(`/admin/products?saved=${encodeURIComponent(values.name)}`);
 }
 
+// Used by the "Зургуудыг цэгцлэх" tool after it re-uploads a trimmed main photo
+export async function setProductImage(id, url) {
+  const { supabase } = await requireAdmin();
+  if (typeof id !== "string" || typeof url !== "string" || !/^https:\/\//.test(url)) {
+    throw new Error("Буруу утга");
+  }
+  const { error } = await supabase.from("products").update({ image_url: url }).eq("id", id);
+  if (error) throw new Error(error.message);
+  refreshStore();
+}
+
 export async function deleteProduct(formData) {
   const { supabase } = await requireAdmin();
   const id = text(formData, "id");

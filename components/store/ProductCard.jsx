@@ -1,7 +1,7 @@
-import Image from "next/image";
 import Link from "next/link";
 import { formatPrice } from "../../lib/format";
 import AddToCartButton from "./AddToCartButton";
+import ProductThumb from "./ProductThumb";
 
 const NEW_FOR_MS = 30 * 24 * 60 * 60 * 1000;
 
@@ -15,13 +15,10 @@ export default function ProductCard({ product }) {
     <article className="pcard">
       <Link href={href} className="pcard-media" aria-label={product.name}>
         {product.image_url ? (
-          <Image
+          <ProductThumb
             src={product.image_url}
             alt={product.name}
-            width={500}
-            height={900}
             sizes="(max-width: 640px) 45vw, (max-width: 1024px) 30vw, 300px"
-            className="pcard-img"
           />
         ) : (
           <span className="pcard-img pcard-img-empty" />

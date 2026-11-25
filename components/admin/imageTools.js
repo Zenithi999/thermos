@@ -26,8 +26,33 @@ export async function uploadImage(file, folder = "products") {
 
 const MAX_SIDE = 1800;
 
-// Crop away fully transparent margins (so the product fills the hero) and cap the
-// longest side at MAX_SIDE. Photos without transparency are only resized.
+// Find the product inside a photo: the box of pixels that are neither transparent nor part
+// of a flat near-white studio background. Returns null when nothing stands out.
+function contentBox(data, width, height) {
+  const corners = [0, width - 1, (height - 1) * width, height * width - 1].map((i) => i * 4);
+  const transparentBg = corners.every((i) => data[i + 3] < 16);
+  const whiteBg = !transparentBg && corners.every((i) => data[i] > 235 && data[i + 1] > 235 && data[i + 2] > 235);
+
+  let minX = width, minY = height, maxX = -1, maxY = -1;
+  for (let y = 0; y < height; y++) {
+    const row = y * width * 4;
+    for (let x = 0; x < width; x++) {
+      const i = row + x * 4;
+      const background = data[i + 3] <= 12 || (whiteBg && data[i] > 238 && data[i + 1] > 238 && data[i + 2] > 238);
+      if (!background) {
+        if (x < minX) minX = x;
+        if (x > maxX) maxX = x;
+        if (y < minY) minY = y;
+        if (y > maxY) maxY = y;
+      }
+    }
+  }
+  return maxX < 0 ? null : { minX, minY, maxX, maxY };
+}
+
+// Crop away empty margins — transparent ones and flat white studio backgrounds alike — so
+// every product fills its frame the same way, and cap the longest side at MAX_SIDE.
+// Returns the original file when nothing needs to change.
 export async function prepareProductImage(file) {
   const bitmap = await createImageBitmap(file);
   const { width, height } = bitmap;
@@ -38,26 +63,13 @@ export async function prepareProductImage(file) {
   ctx.drawImage(bitmap, 0, 0);
 
   let crop = { x: 0, y: 0, w: width, h: height };
-  if (file.type !== "image/jpeg") {
-    const { data } = ctx.getImageData(0, 0, width, height);
-    let minX = width, minY = height, maxX = -1, maxY = -1;
-    for (let y = 0; y < height; y++) {
-      const row = y * width * 4;
-      for (let x = 0; x < width; x++) {
-        if (data[row + x * 4 + 3] > 12) {
-          if (x < minX) minX = x;
-          if (x > maxX) maxX = x;
-          if (y < minY) minY = y;
-          if (y > maxY) maxY = y;
-        }
-      }
-    }
-    if (maxX >= 0) {
-      const pad = Math.round(Math.max(maxX - minX, maxY - minY) * 0.02);
-      const x = Math.max(0, minX - pad);
-      const y = Math.max(0, minY - pad);
-      crop = { x, y, w: Math.min(width, maxX + pad + 1) - x, h: Math.min(height, maxY + pad + 1) - y };
-    }
+  const box = contentBox(ctx.getImageData(0, 0, width, height).data, width, height);
+  if (box) {
+    const { minX, minY, maxX, maxY } = box;
+    const pad = Math.round(Math.max(maxX - minX, maxY - minY) * 0.02);
+    const x = Math.max(0, minX - pad);
+    const y = Math.max(0, minY - pad);
+    crop = { x, y, w: Math.min(width, maxX + pad + 1) - x, h: Math.min(height, maxY + pad + 1) - y };
   }
 
   const trimmed = crop.w < width * 0.97 || crop.h < height * 0.97;

@@ -558,31 +558,61 @@
   min-width: 0;
 }
 
+/* White tile like thermos.com: photos shot on white blend straight into it, and
+   transparent cut-outs sit on the same clean ground. */
 .pcard-media {
   position: relative;
   display: block;
   aspect-ratio: 4 / 5;
   overflow: hidden;
-  background: var(--surface-2);
+  background: #fff;
+  border: 1px solid var(--line);
+  transition: border-color 0.25s var(--ease);
 }
 
+.pcard-media:hover {
+  border-color: var(--line-strong);
+}
+
+/* Size from the photo's aspect ratio (--ar, set by ProductThumb once it loads) so every
+   product covers about the same area: wide mugs no longer dwarf tall bottles.
+   Limits: 72% of the tile width, 82% of its height (tile height = 1.25 × width). */
 .pcard-img {
+  --ar: 0.55;
   position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  padding: 9% 12%;
+  left: 50%;
+  top: 50%;
+  width: min(72%, calc(102.5% * var(--ar)));
+  height: auto;
+  translate: -50% -50%;
   object-fit: contain;
-  filter: drop-shadow(0 16px 18px rgba(0, 0, 0, 0.16));
-  transition: transform 0.5s var(--ease);
+  /* near-white photo backgrounds vanish on the white tile */
+  mix-blend-mode: multiply;
+  opacity: 0;
+  transition: opacity 0.35s var(--ease), scale 0.5s var(--ease);
+}
+
+@supports (width: calc(sqrt(4) * 1%)) {
+  .pcard-img {
+    /* equal visual area: w = W·√(1.25·0.3·ar) */
+    width: min(72%, calc(102.5% * var(--ar)), calc(sqrt(0.375 * var(--ar)) * 100%));
+  }
+}
+
+.pcard-img.is-sized {
+  opacity: 1;
 }
 
 .pcard-img-empty {
+  inset: 0;
+  width: auto;
+  translate: none;
+  opacity: 1;
   background: var(--surface-2);
 }
 
 .pcard-media:hover .pcard-img {
-  transform: scale(1.05);
+  scale: 1.05;
 }
 
 .pcard-flags {
@@ -772,7 +802,8 @@
   position: relative;
   aspect-ratio: 1 / 1.05;
   overflow: hidden;
-  background: var(--surface-2);
+  background: #fff;
+  border: 1px solid var(--line);
 }
 
 .gallery-img {
@@ -782,8 +813,8 @@
 
 .gallery-main.is-cutout .gallery-img {
   object-fit: contain;
-  padding: 8% 0;
-  filter: drop-shadow(0 26px 28px rgba(0, 0, 0, 0.2));
+  padding: 8%;
+  mix-blend-mode: multiply;
 }
 
 .gallery-empty {
@@ -806,8 +837,8 @@
   height: 80px;
   flex: none;
   overflow: hidden;
-  background: var(--surface-2);
-  border: 2px solid transparent;
+  background: #fff;
+  border: 2px solid var(--line);
   transition: border-color 0.2s;
 }
 
@@ -818,6 +849,7 @@
 .thumb-contain {
   object-fit: contain;
   padding: 8px;
+  mix-blend-mode: multiply;
 }
 
 .thumb-cover {
@@ -1080,7 +1112,8 @@
   position: relative;
   width: 104px;
   height: 124px;
-  background: var(--surface-2);
+  background: #fff;
+  border: 1px solid var(--line);
   display: grid;
   place-items: center;
   overflow: hidden;
@@ -1092,6 +1125,7 @@
   width: 84%;
   height: 84%;
   object-fit: contain;
+  mix-blend-mode: multiply;
 }
 
 .cart-info {
@@ -1289,7 +1323,7 @@
 }
 
 .order-details .summary-thumb {
-  background: var(--surface-2);
+  border: 1px solid var(--line);
 }
 
 .summary-thumb img {
@@ -1298,6 +1332,7 @@
   width: 84%;
   height: 84%;
   object-fit: contain;
+  mix-blend-mode: multiply;
 }
 
 .summary-qty {
